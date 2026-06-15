@@ -15,3 +15,6 @@ class Kernel:
 
         shell = Shell(kernel=self)
         shell.start()
+
+    def shutdown(self):
+        exit()

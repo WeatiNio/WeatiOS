@@ -3,15 +3,15 @@ def create(args, kernel):
     content = " ".join(args[1:])
     kernel.filesystem.create(name, content)
 
-def list(kernel):
+def list(args, kernel):
     kernel.filesystem.list()
 
 def read(args, kernel):
     name = args[0]
     print(kernel.filesystem.read(name))
 
-def shutdown(kernel):
-    kernel.running = False
+def shutdown(args, kernel):
+    kernel.shutdown()
 
 class Parser:
     def __init__(self, kernel):
@@ -19,7 +19,8 @@ class Parser:
          self.commands = {
              "create": create,
              "list": list,
-             "read": read
+             "read": read,
+             "shutdown": shutdown
          }
 
     def parse(self, tokens):
