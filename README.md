@@ -13,11 +13,11 @@ A simple simulated operating system written in python by WeatiNio!
 
 ## Usage
 
-Run the:
+Run:
 
-`boot.py`
+`python3 sys/boot.py`
 
-script in the project root
+in the project root
 
 ## Disclaimer
 
