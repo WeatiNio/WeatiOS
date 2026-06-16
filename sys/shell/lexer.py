@@ -7,6 +7,7 @@ class Lexer():
     def tokenise(self, command):
         operation = ""
         args = []
+        flags = []
         command_pos = 0
 
         temp_string = ""
@@ -18,8 +19,10 @@ class Lexer():
             if char == " " or index == len(command):
                 if command_pos == 0:
                     operation = temp_string
-                else:
+                elif temp_string[0] != "-":
                     args.append(temp_string)
+                else:
+                    flags.append(temp_string)
                 
                 command_pos += 1
                 temp_string = ""
@@ -29,8 +32,10 @@ class Lexer():
         if temp_string:
             if command_pos == 0:
                 operation = temp_string
-            else:
+            elif temp_string[0] != "-":
                 args.append(temp_string)
+            else:
+                flags.append(temp_string)
 
         parser = Parser(kernel=self.kernel)
-        parser.parse({"operation": operation, "args": args})
+        parser.parse({"operation": operation, "args": args, "flags": flags})

@@ -6,8 +6,6 @@ from kernel.filesys import FileSystem
 
 class Kernel:
     def __init__(self):
-        print("Kernel created!")
-
         self.filesystem = FileSystem()
 
     def boot(self):
