@@ -37,9 +37,9 @@ class LERDCRC:
         self.save()
 
     def list(self):
-        print("Listing files...\n")
+        print(f"{"\033[1m"}Listing files...\n")
         for name, content in read_disk().items():
-            print(f"'{name}': {content}")
+            print(f"{"\033[94m"}'{name}': {content}")
             
     def read(self, name):
         if name not in self.temp_disk:

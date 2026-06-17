@@ -5,7 +5,7 @@ A simple simulated operating system written in python by WeatiNio!
 ## Features
 
 - Dynamic shell system
-- Command-driven filesystem interface
+- LERDCRC filesystem - (List, Edit, Read, Delete, Create, Rename, Copy)
 
 ## Requirements
 

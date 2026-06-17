@@ -8,7 +8,7 @@ class Shell:
     def start(self):
         self.running = True
         while self.running:
-            command = input("_>")
+            command = input(f"{"\033[0m"}_>")
 
             lexer = Lexer(kernel=self.kernel)
             lexer.tokenise(command)

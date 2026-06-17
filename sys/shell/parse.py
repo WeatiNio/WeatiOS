@@ -2,10 +2,10 @@ import time
 import requests
 
 def confirm():
-    if input(f"{"\033[95m"}[CONFIRM] You are running a risky command. Type 'confirm' to continue: {'\033[0m'}").lower() == "confirm":
+    if input(f"{"\033[95m"}{"\033[1m"}[WARN] You are running a risky command. Type 'confirm' to continue: {'\033[0m'}").lower() == "confirm":
         return True
     else:
-        print("[INFO] Operation cancelled")
+        print(f"{"\033[1m"}[INFO] Operation cancelled")
         return False
 
 def create(ctx):
@@ -22,7 +22,7 @@ def list(ctx):
 
 def read(ctx):
     name = ctx["args"][0]
-    print(ctx["kernel"].filesystem.read(name))
+    print(f"{"\033[1m"}{ctx["kernel"].filesystem.read(name)}")
 
 def edit(ctx):
     name = ctx["args"][0]
@@ -48,7 +48,7 @@ def shutdown(ctx):
         if ctx["args"]:
             timer = int(ctx["args"][0])
 
-            print(f"Shutting down in {timer}s...")
+            print(f"{"\033[1m"}Shutting down in {timer}s...")
             time.sleep(timer)
 
         ctx["kernel"].shutdown()
@@ -60,13 +60,18 @@ def ping(ctx):
     try:
         response = requests.get(url)
     except Exception:
-        print(f"{"\033[93m"}[ERROR] Invalid URL{"\033[0m"}")
+        print(f"{"\033[93m"}{"\033[1m"}[ERROR] Invalid URL")
         return
     
     elapsed = response.elapsed
-    print(f"Response took {int(elapsed.microseconds / 1000)}ms ({elapsed.total_seconds():0.3f}s)")
-    if "-headers" in ctx["flags"]:
-        print(f"{"\033[95m"}[HEADERS] {response.headers}{"\033[0m"}")
+    print(f"{"\033[1m"}{url} responded in {int(elapsed.total_seconds() * 1000)}ms")
+    if "-headers" in ctx["flags"] or "-a" in ctx["flags"]:
+        print(f"{"\033[94m"}[HEADERS] {response.headers}")
+    if "-content" in ctx["flags"] or "-a" in ctx["flags"]:
+        print(f"{"\033[92m"}[CONTENT] {response.content.decode()}")
+
+        print(f"{"\033[0m"}{"\033[1m"}[INFO] The '-content' & '-a' flags may take up {"\033[4m"}LOTS{"\033[0m"}{"\033[1m"} of space in your terminal")
+
     
 
 class Parser:
@@ -96,15 +101,15 @@ class Parser:
             try:
                 self.commands[operation]({"args": args, "flags": flags, "kernel": self.kernel})
             except FileNotFoundError:
-                print(f"{"\033[93m"}[ERROR] Input file not found{"\033[0m"}")
+                print(f"{"\033[93m"}{"\033[1m"}[ERROR] Input file not found")
             except ValueError:
-                print(f"{"\033[93m"}[ERROR] Argument contains wrong value type{"\033[0m"}")
+                print(f"{"\033[93m"}{"\033[1m"}[ERROR] Argument contains wrong value type")
             except IndexError:
-                print(f"{"\033[93m"}[ERROR] Missing argument{"\033[0m"}")
+                print(f"{"\033[93m"}{"\033[1m"}[ERROR] Missing argument")
             except FileExistsError:
-                print(f"{"\033[93m"}[ERROR] File already exists{"\033[0m"}")
+                print(f"{"\033[93m"}{"\033[1m"}[ERROR] File already exists")
             except Exception as e:
-                print(f"{"\033[93m"}[ERROR] Unknown error: {e}{"\033[0m"}")
+                print(f"{"\033[93m"}{"\033[1m"}[ERROR] Unknown error: {e}")
 
         else:
-            print(f"{"\033[93m"}[ERROR] Invalid command{"\033[0m"}")
+            print(f"{"\033[93m"}{"\033[1m"}[ERROR] Invalid command")

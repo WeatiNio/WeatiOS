@@ -18,7 +18,7 @@ class Lexer():
             char = command[index]
             if char == " " or index == len(command):
                 if command_pos == 0:
-                    operation = temp_string
+                    operation = temp_string.lower()
                 elif temp_string[0] != "-":
                     args.append(temp_string)
                 else:
@@ -31,7 +31,7 @@ class Lexer():
 
         if temp_string:
             if command_pos == 0:
-                operation = temp_string
+                operation = temp_string.lower()
             elif temp_string[0] != "-":
                 args.append(temp_string)
             else:
