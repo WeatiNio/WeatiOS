@@ -1,3 +1,4 @@
+import os
 import time
 import requests
 
@@ -63,6 +64,9 @@ def echo(ctx):
 
     print(string)
 
+def clear(ctx):
+    os.system("cls" if os.name == "nt" else "clear")
+
 def ping(ctx):
     url = ctx["args"][0]
     response = None
@@ -98,7 +102,8 @@ class Parser:
              "rename": rename,
              "copy": copy,
              "ping": ping,
-             "echo": echo
+             "echo": echo,
+             "clear": clear
          }
 
     def parse(self, tokens):
