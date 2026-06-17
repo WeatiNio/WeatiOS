@@ -23,12 +23,27 @@ def read(ctx):
     name = ctx["args"][0]
     print(ctx["kernel"].filesystem.read(name))
 
-def resetdisk(ctx):
-    if "-c" in ctx["flags"] or confirm():
-        ctx["kernel"].filesystem.files = {}
+def edit(ctx):
+    name = ctx["args"][0]
+    new = " ".join(ctx["args"][1:])
+    ctx["kernel"].filesystem.edit(name, new)
+
+def rename(ctx):
+    old = ctx["args"][0]
+    new = ctx["args"][1]
+    ctx["kernel"].filesystem.rename(old, new)
+
+def copy(ctx):
+    original = ctx["args"][0]
+    new = ctx["args"][1]
+    ctx["kernel"].filesystem.create(new, ctx["kernel"].filesystem.read(original))
+
+def cleardisk(ctx):
+    if "-f" in ctx["flags"] or confirm():
+        ctx["kernel"].filesystem.clear()
 
 def shutdown(ctx):
-    if "-c" in ctx["flags"] or confirm():
+    if "-f" in ctx["flags"] or confirm():
         if ctx["args"]:
             timer = int(ctx["args"][0])
 
@@ -45,8 +60,11 @@ class Parser:
              "delete": delete,
              "list": list,
              "read": read,
-             "resetdisk": resetdisk,
-             "shutdown": shutdown
+             "cleardisk": cleardisk,
+             "shutdown": shutdown,
+             "edit": edit,
+             "rename": rename,
+             "copy": copy
          }
 
     def parse(self, tokens):
@@ -65,8 +83,10 @@ class Parser:
                 print(f"{"\033[93m"}[ERROR] Argument contains wrong value type{"\033[0m"}")
             except IndexError:
                 print(f"{"\033[93m"}[ERROR] Missing argument{"\033[0m"}")
+            except FileExistsError:
+                print(f"{"\033[93m"}[ERROR] File already exists{"\033[0m"}")
             except Exception as e:
                 print(f"{"\033[93m"}[ERROR] Unknown error: {e}{"\033[0m"}")
 
         else:
-            print("Unknown command")
+            print(f"{"\033[93m"}[ERROR] Invalid command{"\033[0m"}")

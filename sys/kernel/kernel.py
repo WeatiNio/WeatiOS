@@ -2,11 +2,11 @@ import sys
 import threading
 
 from shell.shell import Shell
-from kernel.filesys import FileSystem
+from kernel.filesys import LERDCRC
 
 class Kernel:
     def __init__(self):
-        self.filesystem = FileSystem()
+        self.filesystem = LERDCRC()
 
     def boot(self):
         py_version = sys.version_info
@@ -18,4 +18,5 @@ class Kernel:
         shell_thread.start()
 
     def shutdown(self):
+        self.filesystem.save()
         exit()
