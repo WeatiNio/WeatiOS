@@ -1,4 +1,5 @@
 import time
+import requests
 
 def confirm():
     if input(f"{"\033[95m"}[CONFIRM] You are running a risky command. Type 'confirm' to continue: {'\033[0m'}").lower() == "confirm":
@@ -52,6 +53,22 @@ def shutdown(ctx):
 
         ctx["kernel"].shutdown()
 
+def ping(ctx):
+    url = ctx["args"][0]
+    response = None
+
+    try:
+        response = requests.get(url)
+    except Exception:
+        print(f"{"\033[93m"}[ERROR] Invalid URL{"\033[0m"}")
+        return
+    
+    elapsed = response.elapsed
+    print(f"Response took {int(elapsed.microseconds / 1000)}ms ({elapsed.total_seconds():0.3f}s)")
+    if "-headers" in ctx["flags"]:
+        print(f"{"\033[95m"}[HEADERS] {response.headers}{"\033[0m"}")
+    
+
 class Parser:
     def __init__(self, kernel):
          self.kernel = kernel
@@ -64,7 +81,8 @@ class Parser:
              "shutdown": shutdown,
              "edit": edit,
              "rename": rename,
-             "copy": copy
+             "copy": copy,
+             "ping": ping
          }
 
     def parse(self, tokens):
