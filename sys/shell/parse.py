@@ -53,6 +53,16 @@ def shutdown(ctx):
 
         ctx["kernel"].shutdown()
 
+def echo(ctx):
+    string = ""
+    for word in ctx["args"]:
+        for char in word:
+            string += char
+        
+        string += " "
+
+    print(string)
+
 def ping(ctx):
     url = ctx["args"][0]
     response = None
@@ -87,7 +97,8 @@ class Parser:
              "edit": edit,
              "rename": rename,
              "copy": copy,
-             "ping": ping
+             "ping": ping,
+             "echo": echo
          }
 
     def parse(self, tokens):
