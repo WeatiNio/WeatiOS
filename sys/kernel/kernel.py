@@ -18,5 +18,4 @@ class Kernel:
         shell_thread.start()
 
     def shutdown(self):
-        self.filesystem.save()
         exit()

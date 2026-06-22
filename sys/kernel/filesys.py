@@ -1,69 +1,74 @@
 import os
-import json
 import pathlib
+import shutil
 
-DISK_PATH = pathlib.Path(__file__).parent.resolve() / "disk.json"
+DISK_PATH = pathlib.Path(__file__).parent.resolve() / "disk"
 
-def read_disk():
-    if not os.path.exists(DISK_PATH):
-        with open(DISK_PATH, "w+") as f:
-            json.dump({}, f, indent=4)
+def real_path(path):
+    return rf"{DISK_PATH / path}"
 
-    with open(DISK_PATH, "r") as f:
-        data = json.load(f)
+def list_dir(path):
+    dirs = []
 
-    return data
+    for item in os.listdir(real_path(path)):
+        full_path = os.path.join(real_path(path), item)
+        if os.path.isdir(full_path): dirs.append(item + "\\")
+        else: dirs.append(item)    
 
-def save_disk(data):
-    with open(DISK_PATH, "w") as f:
-        json.dump(data, f, indent=4)
+    return dirs
 
 class LERDCRC:
     def __init__(self):
-        self.temp_disk = read_disk()
+        if not os.path.exists(DISK_PATH): os.mkdir(DISK_PATH); print(f"{"\033[1m"}[INFO] No disk found, creating new one...")
 
-    def create(self, name, content):
-        if not name in self.temp_disk:
-            self.temp_disk[name] = content
-            self.save()
-        else:
-            raise FileExistsError()
+    def mkfile(self, location, content):
+        target = real_path(location)
 
-    def delete(self, name):
-        if name not in self.temp_disk:
-            raise FileNotFoundError()
+        with open(target, "w+") as f:
+            f.write(content)
+
+    def mkdir(self, location):
+        target = real_path(location)
+
+        os.mkdir(target)
+
+    def delete(self, path):
+        target = real_path(path)
+        print(type(target))
         
-        del self.temp_disk[name]
-        self.save()
+        print(os.path.isdir(target))
+        
+        if os.path.isdir(target): shutil.rmtree(target)
+        else: os.remove(target)
+        
 
-    def list(self):
-        print(f"{"\033[1m"}Listing files...\n")
-        for name, content in read_disk().items():
-            print(f"{"\033[94m"}'{name}': {content}")
+    def list(self, path):
+        target = list_dir(path)
+        if target:
+            print(f"{"\033[1m"}Listing files...\n")
+            for item in target:
+                print(item)
+        else: print(f"{"\033[1m"}[INFO] No files or directories in 'disk\\{path}'")
             
-    def read(self, name):
-        if name not in self.temp_disk:
-            raise FileNotFoundError()
-        
-        return self.temp_disk[name]
-    
-    def edit(self, name, new):
-        if name not in self.temp_disk:
-            raise FileNotFoundError()
-        
-        self.temp_disk[name] = new
-        self.save()
+    def read(self, location):
+        target = real_path(location)
 
-    def rename(self, old, new):
-        if old not in self.temp_disk:
-            raise FileNotFoundError()
-        
-        self.temp_disk[new] = self.temp_disk.pop(old)
-        self.save()
+        with open(target, "r") as f:
+            return f.read()
     
-    def save(self):
-        save_disk(self.temp_disk)
+    def edit(self, location, content):
+        target = real_path(location)
+
+        if not os.path.exists(target): raise FileNotFoundError()
+
+        with open(target, "w+") as f:
+            f.write(content)
+
+    def rename(self, location, name):
+        target = real_path(location)
+        
+        os.rename(target, pathlib.Path(target).parent.absolute() / name)
 
     def clear(self):
-        save_disk({})
-        self.temp_disk = {}
+        shutil.rmtree(DISK_PATH)
+        os.mkdir(DISK_PATH)
