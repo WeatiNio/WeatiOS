@@ -56,9 +56,19 @@ def copy(ctx):
     new = ctx["args"][1]
     ctx["kernel"].filesystem.create(new, ctx["kernel"].filesystem.read(original))
 
+def move(ctx):
+    file = ctx["args"][0]
+    destination = ctx["args"][1]
+    ctx["kernel"].filesystem.move(file, destination)
+
 def clrdisk(ctx):
     if "-f" in ctx["flags"] or confirm():
         ctx["kernel"].filesystem.clear()
+
+def cd(ctx):
+    path = None
+    if ctx["args"]: path = ctx["args"][0]
+    ctx["kernel"].filesystem.cd(path)
 
 def shutdown(ctx):
     if "-f" in ctx["flags"] or confirm():
@@ -120,12 +130,14 @@ class Parser:
              "clrdisk": clrdisk,
              "shutdown": shutdown,
              "edit": edit,
+             "move": move,
              "rename": rename,
              "copy": copy,
+             "cd": cd,
              "ping": ping,
              "echo": echo,
              "clear": clear,
-             "cmds": cmds
+             "cmds": cmds,
          }
 
     def parse(self, tokens):

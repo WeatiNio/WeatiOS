@@ -2,11 +2,11 @@ import sys
 import threading
 
 from shell.shell import Shell
-from kernel.filesys import LERDCRC
+from kernel.filesys import LERDCRMC
 
 class Kernel:
     def __init__(self):
-        self.filesystem = LERDCRC()
+        self.filesystem = LERDCRMC()
 
     def boot(self):
         py_version = sys.version_info
